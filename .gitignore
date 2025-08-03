@@ -205,3 +205,12 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+/.idea/
+/.idea/inspectionProfiles/
+/.idea/runConfigurations/
+/.idea/.gitignore
+/.idea/agentic-rag.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
