@@ -37,10 +37,7 @@
    uv install
    ```
 
-3. **Configure your data and agent settings**
-   - See the provided examples or docs for setup guidance.
-
-4. **Run the project**
+3. **Run the project**
    ```bash
    python main.py
    ```
