@@ -3,6 +3,10 @@
 **Agentic RAG with LangGraph** is an advanced, modular framework designed for implementing state-of-the-art Retrieval-Augmented Generation (RAG) systems with flexible agentic workflows. This project seamlessly combines the power of language models with robust retrieval, data processing, and orchestration capabilities—making it the perfect starting point for anyone looking to build production-ready or experimental RAG applications.
 
 
+## 🔄 Workflow Architecture
+
+<img width="407" height="545" alt="image" src="https://github.com/user-attachments/assets/7b1cc828-3a60-472d-95c0-cfe943dc8a47" />
+
 ## 🚀 Features
 
 - **Agentic Workflows:** Easily define, compose, and extend agent-driven pipelines for reasoning, retrieval, and generation tasks.
