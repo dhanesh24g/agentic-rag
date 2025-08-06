@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
 from langgraph.graph import StateGraph, END
 
+from graph.chains.answer_grader import answer_grader
+from graph.chains.hallucination_grader import hallucination_grader
 from graph.constants import RETRIEVE, GRADE_DOCUMENTS, GENERATE, WEB_SEARCH
 from graph.nodes import retrieve, grade_documents, generate, web_search
 from graph.state import AgentState
@@ -19,6 +21,38 @@ def decide_to_generate(state: AgentState):
         print("---DECISION: GENERATE---")
         return GENERATE
 
+
+def grade_generation_grounded_in_doc_and_question(state: AgentState) -> str:
+    print("---CHECK HALLUCINATIONS---")
+
+    question = state["question"]
+    docs = state["documents"]
+    generation = state["generation"]
+
+    score = hallucination_grader.invoke({
+        "documents": docs,
+        "generation": generation
+    })
+
+    if hallucination_grade := score.binary_score:
+        print("---DECISION: GENERATION IS GROUNDED IN DOCUMENTS---")
+        print("---GRADE GENERATION VS QUESTION---")
+
+        score = answer_grader.invoke(
+            {"question": question, "generation": generation},
+        )
+
+        if answer_grade := score.binary_score:
+            print("---DECISION: GENERATION ADDRESSES THE QUESTION---")
+            return "relevant"
+        else:
+            print("---DECISION: GENERATION DOES NOT ADDRESS THE QUESTION---")
+            return "not relevant"
+
+    else:
+        print("---DECISION: GENERATION IS NOT GROUNDED IN DOCUMENTS---")
+        return "hallucinated"
+
 # Build the graph
 workflow = StateGraph(AgentState)
 
@@ -36,6 +70,16 @@ workflow.add_conditional_edges(
     {
         WEB_SEARCH: WEB_SEARCH,
         GENERATE: GENERATE
+    }
+)
+
+workflow.add_conditional_edges(
+    GENERATE,
+    grade_generation_grounded_in_doc_and_question,
+    {
+        "hallucinated": GENERATE,
+        "not relevant": WEB_SEARCH,
+        "relevant": END,
     }
 )
 
